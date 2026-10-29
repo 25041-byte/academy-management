@@ -7,8 +7,8 @@
     <style>
         * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
         body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 700px; }
-        h1, h2 { text-align: center; color: #1e293b; margin-bottom: 25px; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 750px; }
+        h1, h2, h3 { text-align: center; color: #1e293b; margin-bottom: 20px; }
         .form-group { margin-bottom: 15px; }
         input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background-color: #fff; }
         button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -18,7 +18,7 @@
         .btn-delete:hover { background-color: #dc2626; }
         .btn-logout { background-color: #64748b; color: white; margin-top: 15px; }
         .btn-logout:hover { background-color: #475569; }
-        .table-container { overflow-x: auto; margin-top: 25px; width: 100%; }
+        .table-container { overflow-x: auto; margin-top: 20px; width: 100%; }
         table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; min-width: 500px; }
         th { background-color: #1e293b; color: white; padding: 12px 8px; }
         td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; }
@@ -27,6 +27,8 @@
         .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
         .badge-success { background-color: #d1fae5; color: #065f46; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .stats-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 25px; }
+        .teacher-badge { background-color: #3b82f6; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -38,7 +40,6 @@
         <div class="form-group">
             <input type="password" id="pinInput" placeholder="أدخل رمز الدخول (PIN)">
         </div>
-        <!-- تم تصحيح الخطأ هنا: إغلاق وسم الفتح والزر -->
         <button class="btn-add" onclick="login()">دخول</button>
     </div>
 
@@ -68,6 +69,16 @@
                     <option value="متقدم (C1-C2)">متقدم (C1-C2)</option>
                 </select>
             </div>
+            <!-- خانة تابعة لأستاذ الطالب -->
+            <div class="form-group">
+                <select id="teacher" required>
+                    <option value="">اختر الأستاذ</option>
+                    <option value="أستاذ أحمد">أستاذ أحمد</option>
+                    <option value="أستاذة سارة">أستاذة سارة</option>
+                    <option value="أستاذ محمد">أستاذ محمد</option>
+                    <option value="أستاذة فاطمة">أستاذة فاطمة</option>
+                </select>
+            </div>
             <div class="form-group">
                 <select id="payment" required>
                     <option value="خالص">تم الدفع (خالص)</option>
@@ -76,9 +87,13 @@
             </div>
             <button type="submit" class="btn-add">إضافة طالب جديد</button>
         </form>
-<div class="form-group" style="margin-top: 20px;">
-    <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم الطالب..." onkeyup="filterStudents()">
-</div>
+
+        <!-- حقل البحث -->
+        <div class="form-group" style="margin-top: 20px;">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم الطالب..." onkeyup="filterStudents()">
+        </div>
+
+        <!-- جدول الطلاب -->
         <div class="table-container">
             <table>
                 <thead>
@@ -86,6 +101,7 @@
                         <th>اسم الطالب</th>
                         <th>اللغة</th>
                         <th>المستوى</th>
+                        <th>الأستاذ</th>
                         <th>حالة الدفع</th>
                         <th>تاريخ التسجيل</th>
                         <th>إجراءات</th>
@@ -95,28 +111,25 @@
             </table>
         </div>
 
+        <!-- قسم إحصائيات الأساتذة -->
+        <div class="stats-box">
+            <h3>📊 إحصائيات الأساتذة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم الأستاذ</th>
+                        <th>عدد الطلاب المسجلين</th>
+                    </tr>
+                </thead>
+                <tbody id="teachersTable"></tbody>
+            </table>
+        </div>
+
         <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
     </div>
 </div>
 
 <script>
-    function filterStudents() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    const rows = document.querySelectorAll('#studentsTable tr');
-
-    rows.forEach(row => {
-        // الخلية الأولى تحتوي على اسم الطالب
-        const nameCell = row.cells[0]; 
-        if (nameCell) {
-            const studentName = nameCell.textContent.toLowerCase();
-            if (studentName.includes(query)) {
-                row.style.display = ''; // إظهار السطر
-            } else {
-                row.style.display = 'none'; // إخفاء السطر
-            }
-        }
-    });
-}
     let students = JSON.parse(localStorage.getItem('academy_students')) || [];
 
     function login() {
@@ -136,32 +149,77 @@
         document.getElementById('authScreen').classList.remove('hidden');
     }
 
+    function filterStudents() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#studentsTable tr');
+
+        rows.forEach(row => {
+            const nameCell = row.cells[0]; 
+            if (nameCell) {
+                const studentName = nameCell.textContent.toLowerCase();
+                row.style.display = studentName.includes(query) ? '' : 'none';
+            }
+        });
+    }
+
     function loadStudents() {
         const tbody = document.getElementById('studentsTable');
         tbody.innerHTML = '';
         
         if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6">لا يوجد طلاب مسجلون حالياً</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7">لا يوجد طلاب مسجلون حالياً</td></tr>';
+        } else {
+            students.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                const isPaid = student.payment === 'خالص';
+                
+                tr.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.language}</td>
+                    <td>${student.level}</td>
+                    <td><b>${student.teacher || 'غير محدد'}</b></td>
+                    <td>
+                        <span class="badge ${isPaid ? 'badge-success' : 'badge-danger'}">
+                            ${student.payment}
+                        </span>
+                    </td>
+                    <td>${student.date}</td>
+                    <td><button class="btn-delete" onclick="deleteStudent(${index})">حذف</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // تحديث جدول إحصائيات الأساتذة
+        updateTeacherStats();
+    }
+
+    function updateTeacherStats() {
+        const teachersTbody = document.getElementById('teachersTable');
+        teachersTbody.innerHTML = '';
+
+        // حصر الأساتذة وعدد طلاب كل واحد
+        const teacherCounts = {};
+
+        students.forEach(student => {
+            const tName = student.teacher || 'غير محدد';
+            teacherCounts[tName] = (teacherCounts[tName] || 0) + 1;
+        });
+
+        const teachers = Object.keys(teacherCounts);
+
+        if (teachers.length === 0) {
+            teachersTbody.innerHTML = '<tr><td colspan="2">لا توجد بيانات متاحة</td></tr>';
             return;
         }
 
-        students.forEach((student, index) => {
+        teachers.forEach(teacher => {
             const tr = document.createElement('tr');
-            const isPaid = student.payment === 'خالص';
-            
             tr.innerHTML = `
-                <td>${student.name}</td>
-                <td>${student.language}</td>
-                <td>${student.level}</td>
-                <td>
-                    <span class="badge ${isPaid ? 'badge-success' : 'badge-danger'}">
-                        ${student.payment}
-                    </span>
-                </td>
-                <td>${student.date}</td>
-                <td><button class="btn-delete" onclick="deleteStudent(${index})">حذف</button></td>
+                <td>${teacher}</td>
+                <td><span class="teacher-badge">${teacherCounts[teacher]} طالب</span></td>
             `;
-            tbody.appendChild(tr);
+            teachersTbody.appendChild(tr);
         });
     }
 
@@ -173,6 +231,7 @@
             name: document.getElementById('name').value,
             language: document.getElementById('language').value,
             level: document.getElementById('level').value,
+            teacher: document.getElementById('teacher').value,
             payment: document.getElementById('payment').value,
             date: new Date().toLocaleDateString('ar-EG')
         };

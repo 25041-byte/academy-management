@@ -5,30 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academy Online</title>
     <style>
-        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 750px; }
-        h1, h2, h3 { text-align: center; color: #1e293b; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background-color: #fff; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-add { background-color: #10b981; color: white; margin-top: 10px; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-body: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --border-color: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg-body); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        
+        .container { 
+            background: var(--card-bg); 
+            padding: 24px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); 
+            width: 100%; 
+            max-width: 800px; 
+        }
+
+        h1, h2, h3 { text-align: center; color: var(--text-main); margin-bottom: 20px; font-weight: 700; }
+        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 4px; font-weight: 600; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 10px 14px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn { 
+            width: 100%; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-add { background-color: var(--success); color: white; margin-top: 5px; }
         .btn-add:hover { background-color: #059669; }
-        .btn-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-        .btn-delete:hover { background-color: #dc2626; }
-        .btn-logout { background-color: #64748b; color: white; margin-top: 15px; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-delete { background-color: #fee2e2; color: var(--danger); padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; width: auto; }
+        .btn-delete:hover { background-color: var(--danger); color: white; }
+        .btn-logout { background-color: #64748b; color: white; margin-top: 25px; }
         .btn-logout:hover { background-color: #475569; }
-        .table-container { overflow-x: auto; margin-top: 20px; width: 100%; }
-        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; min-width: 500px; }
-        th { background-color: #1e293b; color: white; padding: 12px 8px; }
-        td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; }
-        .auth-screen { text-align: center; padding: 20px 0; }
-        .hidden { display: none !important; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+
+        .table-container { overflow-x: auto; margin-top: 15px; border: 1px solid var(--border-color); border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; white-space: nowrap; }
+        th { background-color: #0f172a; color: white; padding: 12px 14px; font-weight: 600; }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border-color); }
+        tr:last-child td { border-bottom: none; }
+
+        .badge { padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.8rem; display: inline-block; }
         .badge-success { background-color: #d1fae5; color: #065f46; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
-        .stats-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 25px; }
-        .teacher-badge { background-color: #3b82f6; color: white; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
+
+        .stats-box { background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-top: 25px; }
+        .teacher-badge { background-color: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 20px; font-weight: 700; }
+        
+        .manage-teachers-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .auth-screen { text-align: center; padding: 30px 0; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -37,17 +100,17 @@
     <!-- شاشة الدخول -->
     <div id="authScreen" class="auth-screen">
         <h2>🎓 Academy Online</h2>
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 20px;">
             <input type="password" id="pinInput" placeholder="أدخل رمز الدخول (PIN)">
         </div>
-        <button class="btn-add" onclick="login()">دخول</button>
+        <button class="btn btn-primary" id="loginBtn">دخول</button>
     </div>
 
     <!-- لوحة التحكم -->
     <div id="appScreen" class="hidden">
         <h1>🎓 Academy Online</h1>
         
-        <form id="studentForm" onsubmit="addStudent(event)">
+        <form id="studentForm">
             <div class="form-group">
                 <input type="text" id="name" placeholder="اسم الطالب" required>
             </div>
@@ -69,31 +132,28 @@
                     <option value="متقدم (C1-C2)">متقدم (C1-C2)</option>
                 </select>
             </div>
-            <!-- خانة تابعة لأستاذ الطالب -->
+            
             <div class="form-group">
-                <select id="teacher" required>
-                    <option value="">اختر الأستاذ</option>
-                    <option value="أستاذ أحمد">أستاذ أحمد</option>
-                    <option value="أستاذة سارة">أستاذة سارة</option>
-                    <option value="أستاذ محمد">أستاذ محمد</option>
-                    <option value="أستاذة فاطمة">أستاذة فاطمة</option>
+                <select id="teacherSelect" required>
+                    <!-- يتم التحميل ديناميكياً -->
                 </select>
             </div>
+
             <div class="form-group">
                 <select id="payment" required>
                     <option value="خالص">تم الدفع (خالص)</option>
                     <option value="غير خالص">غير خالص (معلق)</option>
                 </select>
             </div>
-            <button type="submit" class="btn-add">إضافة طالب جديد</button>
+            <button type="submit" class="btn btn-add">إضافة طالب جديد</button>
         </form>
 
         <!-- حقل البحث -->
         <div class="form-group" style="margin-top: 20px;">
-            <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم الطالب..." onkeyup="filterStudents()">
+            <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم الطالب...">
         </div>
 
-        <!-- جدول الطلاب -->
+        <!-- جدول عرض الطلاب -->
         <div class="table-container">
             <table>
                 <thead>
@@ -111,144 +171,208 @@
             </table>
         </div>
 
-        <!-- قسم إحصائيات الأساتذة -->
+        <!-- قسم إحصائيات وإدارة الأساتذة -->
         <div class="stats-box">
-            <h3>📊 إحصائيات الأساتذة</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>اسم الأستاذ</th>
-                        <th>عدد الطلاب المسجلين</th>
-                    </tr>
-                </thead>
-                <tbody id="teachersTable"></tbody>
-            </table>
+            <h3> إدارة الأساتذة</h3>
+            
+            <div class="manage-teachers-section">
+                <input type="text" id="newTeacherInput" placeholder="أضف أستاذ جديد...">
+                <button type="button" class="btn btn-primary" id="addTeacherBtn" style="width: auto;">إضافة</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الأستاذ</th>
+                            <th>عدد الطلاب المسجلين</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersTable"></tbody>
+                </table>
+            </div>
         </div>
 
-        <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+        <button class="btn btn-logout" id="logoutBtn">تسجيل الخروج</button>
     </div>
 </div>
 
 <script>
+    // التهيئة والبيانات المبدئية
     let students = JSON.parse(localStorage.getItem('academy_students')) || [];
+    let teachers = JSON.parse(localStorage.getItem('academy_teachers')) || ['أستاذ أحمد', 'أستاذة سارة'];
 
-    function login() {
+    // عناصر الصفحة
+    const authScreen = document.getElementById('authScreen');
+    const appScreen = document.getElementById('appScreen');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const studentForm = document.getElementById('studentForm');
+    const searchInput = document.getElementById('searchInput');
+    const teacherSelect = document.getElementById('teacherSelect');
+    const addTeacherBtn = document.getElementById('addTeacherBtn');
+    const newTeacherInput = document.getElementById('newTeacherInput');
+
+    // تسجيل الدخول
+    loginBtn.addEventListener('click', () => {
         const pin = document.getElementById('pinInput').value;
         if (pin === '0808') {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appScreen').classList.remove('hidden');
-            loadStudents();
+            authScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
+            renderAll();
         } else {
             alert('رمز PIN غير صحيح!');
         }
-    }
+    });
 
-    function logout() {
+    // تسجيل الخروج
+    logoutBtn.addEventListener('click', () => {
         document.getElementById('pinInput').value = '';
-        document.getElementById('appScreen').classList.add('hidden');
-        document.getElementById('authScreen').classList.remove('hidden');
-    }
+        appScreen.classList.add('hidden');
+        authScreen.classList.remove('hidden');
+    });
 
-    function filterStudents() {
-        const query = document.getElementById('searchInput').value.toLowerCase().trim();
-        const rows = document.querySelectorAll('#studentsTable tr');
-
-        rows.forEach(row => {
-            const nameCell = row.cells[0]; 
-            if (nameCell) {
-                const studentName = nameCell.textContent.toLowerCase();
-                row.style.display = studentName.includes(query) ? '' : 'none';
-            }
-        });
-    }
-
-    function loadStudents() {
-        const tbody = document.getElementById('studentsTable');
-        tbody.innerHTML = '';
-        
-        if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7">لا يوجد طلاب مسجلون حالياً</td></tr>';
-        } else {
-            students.forEach((student, index) => {
-                const tr = document.createElement('tr');
-                const isPaid = student.payment === 'خالص';
-                
-                tr.innerHTML = `
-                    <td>${student.name}</td>
-                    <td>${student.language}</td>
-                    <td>${student.level}</td>
-                    <td><b>${student.teacher || 'غير محدد'}</b></td>
-                    <td>
-                        <span class="badge ${isPaid ? 'badge-success' : 'badge-danger'}">
-                            ${student.payment}
-                        </span>
-                    </td>
-                    <td>${student.date}</td>
-                    <td><button class="btn-delete" onclick="deleteStudent(${index})">حذف</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
+    // إضافة أستاذ جديد
+    addTeacherBtn.addEventListener('click', () => {
+        const teacherName = newTeacherInput.value.trim();
+        if (teacherName && !teachers.includes(teacherName)) {
+            teachers.push(teacherName);
+            saveData();
+            newTeacherInput.value = '';
+            renderAll();
         }
+    });
 
-        // تحديث جدول إحصائيات الأساتذة
-        updateTeacherStats();
-    }
-
-    function updateTeacherStats() {
-        const teachersTbody = document.getElementById('teachersTable');
-        teachersTbody.innerHTML = '';
-
-        // حصر الأساتذة وعدد طلاب كل واحد
-        const teacherCounts = {};
-
-        students.forEach(student => {
-            const tName = student.teacher || 'غير محدد';
-            teacherCounts[tName] = (teacherCounts[tName] || 0) + 1;
-        });
-
-        const teachers = Object.keys(teacherCounts);
-
-        if (teachers.length === 0) {
-            teachersTbody.innerHTML = '<tr><td colspan="2">لا توجد بيانات متاحة</td></tr>';
-            return;
-        }
-
-        teachers.forEach(teacher => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${teacher}</td>
-                <td><span class="teacher-badge">${teacherCounts[teacher]} طالب</span></td>
-            `;
-            teachersTbody.appendChild(tr);
-        });
-    }
-
-    function addStudent(e) {
+    // إضافة طالب جديد
+    studentForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
         const newStudent = {
             id: Date.now(),
-            name: document.getElementById('name').value,
+            name: document.getElementById('name').value.trim(),
             language: document.getElementById('language').value,
             level: document.getElementById('level').value,
-            teacher: document.getElementById('teacher').value,
+            teacher: teacherSelect.value,
             payment: document.getElementById('payment').value,
             date: new Date().toLocaleDateString('ar-EG')
         };
 
         students.push(newStudent);
-        localStorage.setItem('academy_students', JSON.stringify(students));
-        
-        document.getElementById('studentForm').reset();
-        loadStudents();
+        saveData();
+        studentForm.reset();
+        renderAll();
+    });
+
+    // حذف طالب
+    function deleteStudent(id) {
+        if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
+            students = students.filter(student => student.id !== id);
+            saveData();
+            renderAll();
+        }
     }
 
-    function deleteStudent(index) {
-        if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
-            students.splice(index, 1);
-            localStorage.setItem('academy_students', JSON.stringify(students));
-            loadStudents();
+    // حذف أستاذ
+    function deleteTeacher(teacherName) {
+        if (confirm(`هل أنت متأكد من حذف ${teacherName}؟`)) {
+            teachers = teachers.filter(t => t !== teacherName);
+            saveData();
+            renderAll();
         }
+    }
+
+    // البحث الفوري
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#studentsTable tr');
+
+        rows.forEach(row => {
+            const nameCell = row.cells[0];
+            if (nameCell) {
+                const studentName = nameCell.textContent.toLowerCase();
+                row.style.display = studentName.includes(query) ? '' : 'none';
+            }
+        });
+    });
+
+    // تحديث خيارات الأساتذة
+    function renderTeacherOptions() {
+        teacherSelect.innerHTML = '<option value="">اختر الأستاذ</option>';
+        teachers.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            teacherSelect.appendChild(opt);
+        });
+    }
+
+    // عرض جدول الطلاب
+    function renderStudentsTable() {
+        const tbody = document.getElementById('studentsTable');
+        tbody.innerHTML = '';
+
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">لا يوجد طلاب مسجلون حالياً</td></tr>';
+            return;
+        }
+
+        students.forEach((student) => {
+            const tr = document.createElement('tr');
+            const isPaid = student.payment === 'خالص';
+            
+            tr.innerHTML = `
+                <td><b>${student.name}</b></td>
+                <td>${student.language}</td>
+                <td>${student.level}</td>
+                <td>${student.teacher || 'غير محدد'}</td>
+                <td>
+                    <span class="badge ${isPaid ? 'badge-success' : 'badge-danger'}">
+                        ${student.payment}
+                    </span>
+                </td>
+                <td>${student.date}</td>
+                <td><button class="btn btn-delete" onclick="deleteStudent(${student.id})">حذف</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // عرض جدول وإحصائيات الأساتذة
+    function renderTeachersTable() {
+        const tbody = document.getElementById('teachersTable');
+        tbody.innerHTML = '';
+
+        const teacherCounts = {};
+        teachers.forEach(t => teacherCounts[t] = 0);
+        
+        students.forEach(s => {
+            if (s.teacher && teacherCounts.hasOwnProperty(s.teacher)) {
+                teacherCounts[s.teacher]++;
+            }
+        });
+
+        teachers.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${t}</b></td>
+                <td><span class="teacher-badge">${teacherCounts[t]} طالب</span></td>
+                <td><button class="btn btn-delete" onclick="deleteTeacher('${t}')">حذف</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // حفظ البيانات
+    function saveData() {
+        localStorage.setItem('academy_students', JSON.stringify(students));
+        localStorage.setItem('academy_teachers', JSON.stringify(teachers));
+    }
+
+    // إعادة رسم كل العناصر
+    function renderAll() {
+        renderTeacherOptions();
+        renderStudentsTable();
+        renderTeachersTable();
     }
 </script>
 

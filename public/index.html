@@ -76,7 +76,9 @@
             </div>
             <button type="submit" class="btn-add">إضافة طالب جديد</button>
         </form>
-
+<div class="form-group" style="margin-top: 20px;">
+    <input type="text" id="searchInput" placeholder="🔍 ابحث عن اسم الطالب..." onkeyup="filterStudents()">
+</div>
         <div class="table-container">
             <table>
                 <thead>
@@ -98,6 +100,23 @@
 </div>
 
 <script>
+    function filterStudents() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#studentsTable tr');
+
+    rows.forEach(row => {
+        // الخلية الأولى تحتوي على اسم الطالب
+        const nameCell = row.cells[0]; 
+        if (nameCell) {
+            const studentName = nameCell.textContent.toLowerCase();
+            if (studentName.includes(query)) {
+                row.style.display = ''; // إظهار السطر
+            } else {
+                row.style.display = 'none'; // إخفاء السطر
+            }
+        }
+    });
+}
     let students = JSON.parse(localStorage.getItem('academy_students')) || [];
 
     function login() {

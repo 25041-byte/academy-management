@@ -3,148 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة أكاديمية اللغات</title>
+    <title>نظام إدارة أكاديمية اللغات</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 25px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        input, select, button { padding: 12px; font-size: 15px; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
-        button { background-color: #27ae60; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #219150; }
-        table { width: 100%; border-collapse: collapse; margin-top: 25px; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
-        th { background-color: #34495e; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        .paid { color: #27ae60; font-weight: bold; }
-        .unpaid { color: #c0392b; font-weight: bold; }
-        .btn-delete { background-color: #e74c3c; padding: 6px 12px; width: auto; font-size: 13px; }
-        .btn-delete:hover { background-color: #c0392b; }
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); width: 100%; max-width: 600px; }
+        h1 { text-align: center; color: #1e293b; margin-bottom: 25px; font-size: 1.6rem; }
+        .form-group { margin-bottom: 15px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; background-color: #fff; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-add { background-color: #10b981; color: white; margin-top: 10px; }
+        .btn-add:hover { background-color: #059669; }
+        .btn-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; }
+        .table-container { overflow-x: auto; margin-top: 25px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; }
+        th { background-color: #1e293b; color: white; padding: 12px 8px; }
+        td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; }
+        .auth-screen { text-align: center; padding: 20px 0; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-<!-- شاشة إدخال الكود السرّي -->
-<div id="loginOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#2c3e50; display:flex; justify-content:center; align-items:center; z-index:9999;">
-    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-width:90%; width:350px;">
-        <h2>🔒 دخول النظام</h2>
-        <p style="color:#666;">أدخل الكود السرّي للمتابعة</p>
-        <input type="password" id="secretInput" placeholder="أدخل الكود هنا" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ccc; border-radius:6px; font-size:18px; text-align:center;">
-        <button onclick="checkCode()" style="width:100%; padding:12px; background:#27ae60; color:white; border:none; border-radius:6px; font-size:16px; cursor:pointer;">دخول</button>
-        <p id="errorMsg" style="color:red; margin-top:10px; display:none;">الكود غير صحيح!</p>
+
+<div class="container">
+    <div id="authScreen" class="auth-screen">
+        <h2>🎓 دخول النظام</h2>
+        <div class="form-group">
+            <input type="password" id="pinInput" placeholder="أدخل رمز PIN (1234)">
+        </div>
+        <button class="btn-add" onclick="login()">دخول</button>
+    </div>
+
+    <div id="appScreen" class="hidden">
+        <h1>🎓 نظام إدارة أكاديمية اللغات</h1>
+        
+        <form id="studentForm" onsubmit="addStudent(event)">
+            <div class="form-group">
+                <input type="text" id="name" placeholder="اسم الطالب" required>
+            </div>
+            <div class="form-group">
+                <select id="language" required>
+                    <option value="">اختر اللغة</option>
+                    <option value="الإنجليزية">الإنجليزية</option>
+                    <option value="الفرنسية">الفرنسية</option>
+                    <option value="الإسبانية">الإسبانية</option>
+                    <option value="الألمانية">الألمانية</option>
+                    <option value="تركية">التركية</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select id="level" required>
+                    <option value="">اختر المستوى</option>
+                    <option value="مبتدئ (A1-A2)">مبتدئ (A1-A2)</option>
+                    <option value="متوسط (B1-B2)">متوسط (B1-B2)</option>
+                    <option value="متقدم (C1-C2)">متقدم (C1-C2)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select id="payment" required>
+                    <option value="خالص">تم الدفع (خالص)</option>
+                    <option value="غير خالص">غير خالص (معلق)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-add">إضافة طالب جديد</button>
+        </form>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم الطالب</th>
+                        <th>اللغة</th>
+                        <th>المستوى</th>
+                        <th>حالة الدفع</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTable"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-async function checkCode() {
-    const input = document.getElementById('secretInput').value;
-    const res = await fetch('/api/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: input })
-    });
-    const data = await res.json();
-    if (data.success) {
-        document.getElementById('loginOverlay').style.display = 'none';
-        loadStudents(); // تحميل البيانات
-    } else {
-        document.getElementById('errorMsg').style.display = 'block';
-    }
-}
-</script>
-<div class="container">
-    <h1>🎓 نظام إدارة أكاديمية اللغات</h1>
+    let authToken = '';
 
-    <form id="studentForm">
-        <div class="form-grid">
-            <input type="text" id="name" placeholder="اسم الطالب" required>
-            <select id="language" required>
-                <option value="">اختر اللغة</option>
-                <option value="الفرنسية">الفرنسية (Français)</option>
-                <option value="إنجليزية">الإنجليزية (English)</option>
-                <option value="إسبانية">الإسبانية (Español)</option>
-                <option value="ألمانية">الألمانية (Deutsch)</option>
-            </select>
-            <select id="level" required>
-                <option value="">اختر المستوى</option>
-                <option value="A1">A1</option>
-                <option value="A2">A2</option>
-                <option value="B1">B1</option>
-                <option value="B2">B2</option>
-                <option value="C1">C1</option>
-            </select>
-            <select id="paymentStatus" required>
-                <option value="خالص">تم الدفع (خالص)</option>
-                <option value="غير خالص">لم يدفع (غير خالص)</option>
-            </select>
-        </div>
-        <button type="submit">إضافة طالب جديد</button>
-    </form>
-
-    <table>
-        <thead>
-            <tr>
-                <th>اسم الطالب</th>
-                <th>اللغة</th>
-                <th>المستوى</th>
-                <th>حالة الدفع</th>
-                <th>تاريخ التسجيل</th>
-                <th>إجراءات</th>
-            </tr>
-        </thead>
-        <tbody id="studentTableBody"></tbody>
-    </table>
-</div>
-
-<script>
-    const form = document.getElementById('studentForm');
-    const tableBody = document.getElementById('studentTableBody');
-
-    async function fetchStudents() {
-        const res = await fetch('/api/students');
-        const students = await res.json();
-        tableBody.innerHTML = '';
-        students.forEach(s => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${s.name}</td>
-                <td>${s.language}</td>
-                <td>${s.level}</td>
-                <td class="${s.paymentStatus === 'خالص' ? 'paid' : 'unpaid'}">${s.paymentStatus}</td>
-                <td>${s.createdAt}</td>
-                <td><button class="btn-delete" onclick="deleteStudent(${s.id})">حذف</button></td>
-            `;
-            tableBody.appendChild(row);
-        });
+    function login() {
+        const pin = document.getElementById('pinInput').value;
+        if (pin === '1234') {
+            authToken = pin;
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('appScreen').classList.remove('hidden');
+            loadStudents();
+        } else {
+            alert('رمز PIN غير صحيح!');
+        }
     }
 
-    form.addEventListener('submit', async (e) => {
+    async function loadStudents() {
+        try {
+            const res = await fetch('/api/students', {
+                headers: { 'Authorization': authToken }
+            });
+            const students = await res.json();
+            const tbody = document.getElementById('studentsTable');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.language}</td>
+                    <td>${student.level}</td>
+                    <td><b style="color: ${student.payment === 'خالص' ? '#10b981' : '#ef4444'}">${student.payment}</b></td>
+                    <td>${student.date || '-'}</td>
+                    <td><button class="btn-delete" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function addStudent(e) {
         e.preventDefault();
         const studentData = {
             name: document.getElementById('name').value,
             language: document.getElementById('language').value,
             level: document.getElementById('level').value,
-            paymentStatus: document.getElementById('paymentStatus').value
+            payment: document.getElementById('payment').value,
+            date: new Date().toLocaleDateString('ar-EG')
         };
 
         await fetch('/api/students', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authToken
+            },
             body: JSON.stringify(studentData)
         });
 
-        form.reset();
-        fetchStudents();
-    });
+        document.getElementById('studentForm').reset();
+        loadStudents();
+    }
 
     async function deleteStudent(id) {
         if (confirm('هل أنت تأكد من حذف هذا الطالب؟')) {
-            await fetch(`/api/students/${id}`, { method: 'DELETE' });
-            fetchStudents();
+            await fetch(`/api/students/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': authToken }
+            });
+            loadStudents();
         }
     }
-
-    fetchStudents();
 </script>
+
 </body>
 </html>

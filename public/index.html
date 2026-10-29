@@ -14,18 +14,19 @@
         button { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-add { background-color: #10b981; color: white; margin-top: 10px; }
         .btn-add:hover { background-color: #059669; }
-        .btn-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; }
-        .table-container { overflow-x: auto; margin-top: 25px; }
-        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; }
+        .btn-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .table-container { overflow-x: auto; margin-top: 25px; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; min-width: 450px; }
         th { background-color: #1e293b; color: white; padding: 12px 8px; }
         td { padding: 10px 8px; border-bottom: 1px solid #e2e8f0; }
         .auth-screen { text-align: center; padding: 20px 0; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- شاشة الدخول -->
     <div id="authScreen" class="auth-screen">
         <h2>🎓 دخول النظام</h2>
         <div class="form-group">
@@ -34,6 +35,7 @@
         <button class="btn-add" onclick="login()">دخول</button>
     </div>
 
+    <!-- لوحة التحكم -->
     <div id="appScreen" class="hidden">
         <h1>🎓 نظام إدارة أكاديمية اللغات</h1>
         
@@ -48,7 +50,7 @@
                     <option value="الفرنسية">الفرنسية</option>
                     <option value="الإسبانية">الإسبانية</option>
                     <option value="الألمانية">الألمانية</option>
-                    <option value="تركية">التركية</option>
+                    <option value="التركية">التركية</option>
                 </select>
             </div>
             <div class="form-group">
@@ -110,20 +112,22 @@
             const tbody = document.getElementById('studentsTable');
             tbody.innerHTML = '';
             
-            students.forEach(student => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${student.name}</td>
-                    <td>${student.language}</td>
-                    <td>${student.level}</td>
-                    <td><b style="color: ${student.payment === 'خالص' ? '#10b981' : '#ef4444'}">${student.payment}</b></td>
-                    <td>${student.date || '-'}</td>
-                    <td><button class="btn-delete" onclick="deleteStudent('${student.id}')">حذف</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
+            if (Array.isArray(students)) {
+                students.forEach(student => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${student.name || ''}</td>
+                        <td>${student.language || ''}</td>
+                        <td>${student.level || ''}</td>
+                        <td><b style="color: ${student.payment === 'خالص' ? '#10b981' : '#ef4444'}">${student.payment || ''}</b></td>
+                        <td>${student.date || '-'}</td>
+                        <td><button class="btn-delete" onclick="deleteStudent('${student.id}')">حذف</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
         } catch (err) {
-            console.error(err);
+            console.error('Erreur:', err);
         }
     }
 
